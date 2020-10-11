@@ -67,6 +67,47 @@ mydoc = (
 
 **Note:** Just as with ordinary Python expressions, multi-line BMX expressions must be surrounded by parentheses. 
 
+## How does it work?
+We define a `Tag` class which overrides the unary +/- and binary +/- operators to model the opening and closing tags of HTML. We provide a `__call__` method to model HTML attributes as keyword arguments and a `__getattr__` method to provide a shorthand for HTML classes (see below). A `Tag` is instantiated for every HTML tag and is available with a `from bmx.htmltags import html, head, body, span`.
+
+## Usage
+An example using Flask (available in the top-level source directory):
+```Python
+# flask_greeter.py
+from bmx.htmltags import (
+    html, 
+    head, 
+    title,
+    body,
+    p
+)
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route('/<name>')
+def greeter(name: str):
+    return str(
+        # fmt: off
+        +html
+          +head
+            +title +"Flask Greeter" -title
+          -head
+          +body
+            +p +f"Hello {name}" -p
+          -body
+        -html
+        # fmt: on
+    )
+```
+
+Install Flask then  run it as:
+```Shell
+FLASK_APP=flask_greeter.py flask run
+```
+
+Go to `https://127.0.0.1:5000/<your_name>` in your browser (eg. `https://127.0.0.1:5000/Stuart`) and you will see the message.
+
 ## Table of Conversions
 
 |Type   |HTML       |BMX |Comment/Mnemonic|
