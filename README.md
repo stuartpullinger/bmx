@@ -57,7 +57,7 @@ mydoc = (doc('html')
 |Closing tag | `</div>` | `-div` |*Mnemonic: opposite of adding content*  |
 |Self-closing tag | `<input/>` | `+input` | Self-closing tag are pre-defined |
 |Attributes | `<input type="text">` | `input_(type_="text")` | *Mnemonic: attributes are keyword arguments.* **Note**: Append an underscore to avoid conflicts with Python keywords |
-|Attributes: shorthand for `id` and `class`| `<div id="userinput" class="credentials" >` | `div('#userinput.credentials')` | *#id* *.classname* |
+|Attributes: shorthand for `id` and `class`| `<div id="userinput" class="credentials" >` | `+div('#userinput.credentials')` | *#id* *.classname* |
 |Attributes: shorthand for `class`| `<div class="col-sm-8 col-md-7 py-4">` | `+div .col_sm_8 .col_md_7 .py_4` | *.classname* Underscores are transposed to dashes |
 |Composing tags and content| `<h1>The Title</h1>`| `+h1 +"The Title" -h1` | *Mnemonic: think string concatenation ie. "Hello " + "World!"*|
 
@@ -81,6 +81,7 @@ result = (
 To use autopep8, you can use the `#fmt: off` and `#fmt: on` comments as above or turn off 2 fixes:
 * E225 - Fix missing whitespace around operator.
 * E131 - Fix hanging indent for unaligned continuation line.
+
 whereever you put your autopep8 [configuration](https://github.com/hhatto/autopep8#configuration)
 ```INI
 ignore = E225,E131
