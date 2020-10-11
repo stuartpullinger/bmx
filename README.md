@@ -15,21 +15,21 @@ A DSL for representing HTML/XML in Python using an expression-like syntax. Why? 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>My Webpage</title>
+  <title>My Webpage</title>
 </head>
 <body>
-    <ul id="navigation">
-    {% for item in navigation %}
-        <li>
-          <a href="{{ item.href }}">{{ item.caption }}</a>
-        </li>
-    {% endfor %}
-    </ul>
+  <ul id="navigation">
+  {% for item in navigation %}
+      <li>
+        <a href="{{ item.href }}">{{ item.caption }}</a>
+      </li>
+  {% endfor %}
+  </ul>
 
-    <h1>My Webpage</h1>
-    {{ a_variable }}
+  <h1>My Webpage</h1>
+  {{ a_variable }}
 
-    {# a comment #}
+  {# a comment #}
 </body>
 </html>
 ```
