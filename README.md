@@ -1,9 +1,16 @@
 # BMX - Basic Markup eXpressions
 
-A DSL for representing HTML/XML in Python using an expression-like syntax.
+A DSL for representing HTML/XML in Python using an expression-like syntax. Why? You get to use the Python syntax you already know.
 
 ## Example
-Taking the example from the Jinja2 website:
+<table>
+<tr>
+<td> Taking the example from the Jinja2 website: </td> <td> This can be represented in BMX like this: </td>
+</tr>
+<tr>
+
+<td>
+
 ```html+jinja
 <!DOCTYPE html>
 <html lang="en">
@@ -25,28 +32,37 @@ Taking the example from the Jinja2 website:
 </html>
 ```
 
-This can be represented in BMX like this:
-```Python
-mydoc = (doc('html')
-        +html(lang='en')
-          +head
-            +title +"My Webpage" -title
-          -head
-          +body
-            +ul('#navigation')
-              +(+li
-                  +a(href=item.href) +item.caption -a
-                -li
-                for item in navigation)
-            -ul
+</td>
 
-            +h1 +"My Webpage" -h1
-            +a_variable
+<td>
 
-            # a comment
-          -body
-        -html)
+ ```Python
+mydoc = (
+  DOCTYPE('html')
+  +html(lang='en') 
+    +head
+      +title +"My Webpage" -title
+    -head
+    +body
+      +ul('#navigation')
+        +(+li
+            +a(href=item.href) +item.caption -a
+          -li
+          for item in navigation)
+      -ul
+
+      +h1 +"My Webpage" -h1
+      +a_variable
+
+      # a comment
+    -body
+  -html)
 ```
+
+</td>
+</tr>
+</table>
+
 **Note:** Just as with ordinary Python expressions, multi-line BMX expressions must be surrounded by parentheses. 
 
 ## Table of Conversions
