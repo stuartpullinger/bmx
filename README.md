@@ -20,7 +20,9 @@ A DSL for representing HTML/XML in Python using an expression-like syntax. Why? 
 <body>
     <ul id="navigation">
     {% for item in navigation %}
-        <li><a href="{{ item.href }}">{{ item.caption }}</a></li>
+        <li>
+          <a href="{{ item.href }}">{{ item.caption }}</a>
+        </li>
     {% endfor %}
     </ul>
 
