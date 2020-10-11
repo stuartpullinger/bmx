@@ -56,7 +56,7 @@ mydoc = (doc('html')
 |Opening tag | `<div>` | `+div` |*Mnemonic: Adding content*|
 |Closing tag | `</div>` | `-div` |*Mnemonic: opposite of adding content*  |
 |Self-closing tag | `<input/>` | `+input` | Self-closing tag are pre-defined |
-|Attributes | `<input type="text">` | `input_(type_="text")` | *Mnemonic: attributes are keyword arguments.* **Note**: Append an underscore to avoid conflicts with Python keywords |
+|Attributes | `<input type="text">` | `+input_(type_="text")` | *Mnemonic: attributes are keyword arguments.* **Note**: Append an underscore to avoid conflicts with Python keywords |
 |Attributes: shorthand for `id` and `class`| `<div id="userinput" class="credentials" >` | `+div('#userinput.credentials')` | *#id* *.classname* |
 |Attributes: shorthand for `class`| `<div class="col-sm-8 col-md-7 py-4">` | `+div .col_sm_8 .col_md_7 .py_4` | *.classname* Underscores are transposed to dashes |
 |Composing tags and content| `<h1>The Title</h1>`| `+h1 +"The Title" -h1` | *Mnemonic: think string concatenation ie. "Hello " + "World!"*|
