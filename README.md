@@ -129,7 +129,7 @@ result = (
     # fmt: off
     +html
         +body
-            +title +"My Page" -title
+            +h1 +"My Page" -h1
         -body
     -html
     # fmt: on

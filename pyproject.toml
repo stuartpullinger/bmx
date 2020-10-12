@@ -1,10 +1,22 @@
 [tool.poetry]
 name = "bmx"
-version = "0.1.0"
+version = "0.0.1"
 description = "Basic Markup eXpressions"
 authors = ["Stuart Pullinger <stuartpullinger@gmail.com>"]
 license = "MPL-2.0"
 readme = "README.md"
+homepage = "https://github.com/stuartpullinger/bmx"
+repository = "https://github.com/stuartpullinger/bmx"
+keywords = ["html", "xml", "templating", "markup"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Topic :: Text Processing :: Markup :: HTML",
+  "Topic :: Text Processing :: Markup :: XML"
+]
 
 [tool.poetry.dependencies]
 python = ">=3.6.1, <4.0.0"
