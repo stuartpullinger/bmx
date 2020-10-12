@@ -46,11 +46,11 @@ mydoc = (
       +title +"My Webpage" -title
     -head
     +body
-      +ul('#navigation')
-        +(+li
-            +a(href=item.href) +item.caption -a
-          -li
-          for item in navigation)
+      +ul('#navigation') +(
+        +li
+          +a(href=item.href) +item.caption -a
+        -li
+        for item in navigation)
       -ul
 
       +h1 +"My Webpage" -h1
