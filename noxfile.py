@@ -22,7 +22,7 @@ def install_with_constraints(session, *args, **kwargs):
         session.install(f"--constraint={requirements.name}", *args, **kwargs)
 
 
-@nox.session(python=["3.6", "3.7", "3.8"])
+@nox.session(python=["3.6", "3.7", "3.8", "3.9"])
 def tests(session):
     args = session.posargs or ["--cov", "-m", "not e2e"]
     session.run("poetry", "install", "--no-dev", external=True)
@@ -33,7 +33,7 @@ def tests(session):
 locations = "bmx", "tests", "noxfile.py"
 
 
-@nox.session(python=["3.6", "3.7", "3.8"])
+@nox.session(python=["3.6", "3.7", "3.8", "3.9"])
 def lint(session):
     args = session.posargs or locations
     install_with_constraints(
@@ -55,7 +55,7 @@ def black(session):
     session.run("black", *args)
 
 
-@nox.session(python=["3.6", "3.7", "3.8"])
+@nox.session(python=["3.6", "3.7", "3.8", "3.9"])
 def mypy(session):
     args = session.posargs or locations
     install_with_constraints(session, "mypy")
