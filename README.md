@@ -40,7 +40,7 @@ A DSL for representing HTML/XML in Python using an expression-like syntax. Why? 
 
  ```Python
 mydoc = (
-  DOCTYPE('html')
+  DOCTYPE.html
   +html(lang='en') 
     +head
       +title +"My Webpage" -title

@@ -1,3 +1,4 @@
+from bmx.core import DOCTYPE
 from bmx.htmltags import (
     html, 
     head, 
@@ -13,6 +14,7 @@ app = Flask(__name__)
 def greeter(name: str):
     return str(
         # fmt: off
+        DOCTYPE.html
         +html
           +head
             +title +"Flask Greeter" -title
