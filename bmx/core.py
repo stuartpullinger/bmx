@@ -11,6 +11,8 @@ from enum import Enum
 from reprlib import recursive_repr
 from typing import Any, Callable, List, Optional, Union
 
+from markupsafe import escape
+
 try:
     # >=3.8
     from functools import singledispatchmethod  # type: ignore
@@ -549,7 +551,8 @@ class Fragment(Sequence):
 
     @__add__.register(str)
     def _add_str(self: "Fragment", other: str) -> "Fragment":
-        return Fragment(*self._contents, other)
+        # We use markupsafe to escape all strings to make them safe
+        return Fragment(*self._contents, escape(other))
 
     @__add__.register(Element)
     def _add_Element(self: "Fragment", other: Element) -> "Fragment":
