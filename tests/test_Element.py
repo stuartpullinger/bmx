@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from markupsafe import Markup
 import pytest
 
 from bmx.core import BMXSyntaxError, Element, Fragment, Tag
@@ -68,9 +69,17 @@ def test_str_element(my_element):
     )
 
 
-def test_markupsafe():
+def test_strings_containing_markup_are_escaped():
     username = "<script>callSomeDangerousJavascript();</script>"
     assert (
         str(+span + f"Username is: {username}" - span)
         == "<span>Username is: &lt;script&gt;callSomeDangerousJavascript();&lt;/script&gt;</span>"
+    )
+
+
+def test_markup_objects_are_not_escaped():
+    content = "<script>callSomeJavascript();</script>"
+    assert (
+        str(+span + Markup(f"Content is: {content}") - span)
+        == "<span>Content is: <script>callSomeJavascript();</script></span>"
     )
