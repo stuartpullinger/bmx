@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "bmx"
-version = "0.0.1"
+version = "0.0.2"
 description = "Basic Markup eXpressions"
 authors = ["Stuart Pullinger <stuartpullinger@gmail.com>"]
 license = "MPL-2.0"

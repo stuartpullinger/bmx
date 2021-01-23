@@ -67,6 +67,12 @@ mydoc = (
 
 **Note:** Just as with ordinary Python expressions, multi-line BMX expressions must be surrounded by parentheses. 
 
+## Installation and Dependencies
+`bmx` is tested on CPython versions 3.6-3.9. It has 2 dependencies: singledispatchmethod (backported from 3.8) and MarkupSafe - to escape html in strings.
+```Shell
+pip install bmx
+```
+
 ## How does it work?
 We define a `Tag` class which overrides the unary +/- and binary +/- operators to model the opening and closing tags of HTML. We provide a `__call__` method to model HTML attributes as keyword arguments and a `__getattr__` method to provide a shorthand for HTML classes (see below). A `Tag` is instantiated for every HTML tag and is available with a `from bmx.htmltags import html, head, body, span`.
 
@@ -120,6 +126,9 @@ Go to `https://127.0.0.1:5000/<your_name>` in your browser (eg. `https://127.0.0
 |Attributes: shorthand for `class`| `<div class="col-sm-8 col-md-7 py-4">` | `+div .col_sm_8 .col_md_7 .py_4` | *.classname* Underscores are transposed to dashes |
 |Composing tags and content| `<h1>The Title</h1>`| `+h1 +"The Title" -h1` | *Mnemonic: think string concatenation ie. "Hello " + "World!"*|
 
+### MarkupSafe
+`bmx` uses MarkupSafe to escape HTML from strings. If you are sure that you don't want to escape the HTML in a string, you can wrap it in a Markup object and the string will be included as-is.
+
 ## Autoformatters
 
 ### Black
@@ -145,3 +154,12 @@ whereever you put your autopep8 [configuration](https://github.com/hhatto/autope
 ```INI
 ignore = E225,E131
 ```
+
+## Changelog
+### 0.0.2
+- default to using MarkupSafe for strings
+- include DOCTYPE in htmltags module
+- README improvements/fixes
+
+### 0.0.1
+- Initial release
