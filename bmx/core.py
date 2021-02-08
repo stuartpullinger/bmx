@@ -88,9 +88,18 @@ class Tag(AbstractTag):
                 new_attributes["id_"] = classes[0][1:]
                 del classes[0]
             if classes:
-                if new_attributes.get("class_", None) is None:
-                    new_attributes["class_"] = []
+                new_attributes.setdefault("class_", [])
                 new_attributes["class_"].extend(classes)
+
+        # walrus operator? :=
+        class_item = kwargs.pop("class_", None)
+        if class_item is not None:
+            new_attributes.setdefault("class_", [])
+            if isinstance(class_item, str):
+                # convert "class1 class2" into ['class1', 'class2']
+                new_attributes["class_"].extend(class_item.split(" "))
+            else:
+                new_attributes["class_"].append(class_item)
 
         # add attributes
         new_attributes.update(kwargs)
@@ -228,7 +237,7 @@ class StartTag(Tag):
                 if value is True:
                     attributes.extend(" " + key)
                     continue
-                elif value is False:
+                elif not value:
                     continue
                 elif isinstance(value, list):
                     value = " ".join(value)
