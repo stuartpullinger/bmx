@@ -66,7 +66,13 @@ class AbstractTag(ABC):
 class Tag(AbstractTag):
     def __init__(self: "Tag", _name: str, **_kwargs: Any) -> None:
         self.name = _name
-        self.attributes = _kwargs if _kwargs else {}
+        if _kwargs is not None:
+            self.attributes = {
+                k.replace("_", "-") if not k.endswith("_") else k: v
+                for k, v in _kwargs.items()
+            }
+        else:
+            self.attributes = {}
 
     def create_start_tag(self: "Tag") -> "StartTag":
         return StartTag(self.name, **self.attributes)
@@ -102,7 +108,12 @@ class Tag(AbstractTag):
                 new_attributes["class_"].append(class_item)
 
         # add attributes
-        new_attributes.update(kwargs)
+        new_attributes.update(
+            {
+                k.replace("_", "-") if not k.endswith("_") else k: v
+                for k, v in kwargs.items()
+            }
+        )
 
         #        if isinstance(self, ComponentTag):
         #            return type(self)(self.name, self.render, **new_attributes)

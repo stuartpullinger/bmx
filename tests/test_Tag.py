@@ -154,3 +154,8 @@ def test_setting_class_twice(my_tag):
     tag_with_1_class = my_tag(class_="class1")
     tag_with_2_classes = tag_with_1_class(class_="class2")
     assert tag_with_2_classes.attributes["class_"] == ["class1", "class2"]
+
+
+def test_keywords_arg_with_underscores_replaced_with_dashes(my_tag):
+    tag_with_data_attribute = my_tag(data_bmx="some data")
+    assert tag_with_data_attribute.attributes["data-bmx"] == "some data"
