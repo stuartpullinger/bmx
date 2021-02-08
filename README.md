@@ -3,40 +3,7 @@
 A DSL for representing HTML/XML in Python using an expression-like syntax. Why? You get to use the Python syntax you already know.
 
 ## Example
-<table>
-<tr>
-<td> Taking the example from the Jinja2 website: </td> <td> This can be represented in BMX like this: </td>
-</tr>
-<tr>
-
-<td>
-
-```html+jinja
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <title>My Webpage</title>
-</head>
-<body>
-  <ul id="navigation">
-  {% for item in navigation %}
-    <li>
-      <a href="{{ item.href }}">{{ item.caption }}</a>
-    </li>
-  {% endfor %}
-  </ul>
-
-  <h1>My Webpage</h1>
-  {{ a_variable }}
-
-  {# a comment #}
-</body>
-</html>
-```
-
-</td>
-
-<td>
+[This](https://jinja.palletsprojects.com/en/2.11.x/templates/#synopsis) example from the Jinja2 website can be represented in BMX like so:
 
  ```Python
 mydoc = (
@@ -46,10 +13,11 @@ mydoc = (
       +title +"My Webpage" -title
     -head
     +body
-      +ul('#navigation') +(
-        +li
-          +a(href=item.href) +item.caption -a
-        -li
+      +ul('#navigation') 
+        +(
+          +li
+            +a(href=item.href) +item.caption -a
+          -li
         for item in navigation)
       -ul
 
@@ -61,10 +29,6 @@ mydoc = (
   -html)
 ```
 
-</td>
-</tr>
-</table>
-
 **Note:** Just as with ordinary Python expressions, multi-line BMX expressions must be surrounded by parentheses. 
 
 ## Installation and Dependencies
@@ -72,9 +36,6 @@ mydoc = (
 ```Shell
 pip install bmx
 ```
-
-## How does it work?
-We define a `Tag` class which overrides the unary +/- and binary +/- operators to model the opening and closing tags of HTML. We provide a `__call__` method to model HTML attributes as keyword arguments and a `__getattr__` method to provide a shorthand for HTML classes (see below). A `Tag` is instantiated for every HTML tag and is available with a `from bmx.htmltags import html, head, body, span`.
 
 ## Usage
 An example using Flask (available in the top-level source directory):
@@ -121,10 +82,15 @@ Go to `https://127.0.0.1:5000/<your_name>` in your browser (eg. `https://127.0.0
 |Opening tag | `<div>` | `+div` |*Mnemonic: Adding content*|
 |Closing tag | `</div>` | `-div` |*Mnemonic: opposite of adding content*  |
 |Self-closing tag | `<input/>` | `+input` | Self-closing tag are pre-defined |
-|Attributes | `<input type="text">` | `+input_(type_="text")` | *Mnemonic: attributes are keyword arguments.* **Note**: Append an underscore to avoid conflicts with Python keywords |
+|Attributes | `<a href="/">Home</a>` | `+a(href="/") +"Home" -a` | *Mnemonic: attributes are keyword arguments.* |
+|Attributes | `<button aria-label="Close">X</button>` | `+button(aria_label="Close") +"X" -button` | **Note**: Underscores in keyword arguments are replaced with dashes |
+|Attributes | `<input type="text">` | `+input_(type_="text")` | **Note**: Append an underscore to avoid conflicts with Python keywords |
 |Attributes: shorthand for `id` and `class`| `<div id="userinput" class="credentials" >` | `+div('#userinput.credentials')` | *#id* *.classname* |
-|Attributes: shorthand for `class`| `<div class="col-sm-8 col-md-7 py-4">` | `+div .col_sm_8 .col_md_7 .py_4` | *.classname* Underscores are transposed to dashes |
+|Attributes: shorthand for `class`| `<div class="col-sm-8 col-md-7 py-4">` | `+div .col_sm_8 .col_md_7 .py_4` | *.classname* Underscores are replaced with dashes |
 |Composing tags and content| `<h1>The Title</h1>`| `+h1 +"The Title" -h1` | *Mnemonic: think string concatenation ie. "Hello " + "World!"*|
+
+## How does it work?
+We define a `Tag` class which overrides the unary +/- and binary +/- operators to model the opening and closing tags of HTML. We provide a `__call__` method to model HTML attributes as keyword arguments and a `__getattr__` method to provide a shorthand for HTML classes (see above). A `Tag` is instantiated for every HTML tag and is available with a `from bmx.htmltags import html, head, body, span`.
 
 ### MarkupSafe
 `bmx` uses MarkupSafe to escape HTML from strings. If you are sure that you don't want to escape the HTML in a string, you can wrap it in a Markup object and the string will be included as-is.
@@ -156,6 +122,12 @@ ignore = E225,E131
 ```
 
 ## Changelog
+### 0.0.3
+Fixes for:
+- Class list can only be created once #4
+- Keyword arguments in snake_case should be translated to kebab-case #3
+- README improvements/fixes
+
 ### 0.0.2
 - default to using MarkupSafe for strings
 - include DOCTYPE in htmltags module
