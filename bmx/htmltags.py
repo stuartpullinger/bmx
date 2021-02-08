@@ -2,12 +2,12 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-from .core import SelfClosingTag, SelfClosingTagStyle, Tag, DOCTYPE
+from .core import DOCTYPE, SelfClosingTag, SelfClosingTagStyle, Tag
 
 # <!--...-->
 pass
 # <!DOCTYPE>
-pass
+DOCTYPE = DOCTYPE
 # <a>
 a = Tag("a")
 # <abbr>

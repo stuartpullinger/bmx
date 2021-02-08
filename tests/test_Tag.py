@@ -148,3 +148,9 @@ def test_str_tag_with_id_and_classes(my_tag_with_id_and_classes):
         str(+my_tag_with_id_and_classes)
         == '<my-tag id="title" class="heading uppercase">'
     )
+
+
+def test_setting_class_twice(my_tag):
+    tag_with_1_class = my_tag(class_="class1")
+    tag_with_2_classes = tag_with_1_class(class_="class2")
+    assert tag_with_2_classes.attributes["class_"] == ["class1", "class2"]
