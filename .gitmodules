@@ -1,0 +1,4 @@
+[submodule "libcst-bmx"]
+	path = libcst_bmx
+	url = https://github.com/stuartpullinger/libcst-bmx.git
+	branch = add_bmx
