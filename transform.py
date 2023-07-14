@@ -8,7 +8,7 @@ from libcst_bmx.libcst.codemod.visitors import AddImportsVisitor
 from bmx.htmltags import html5tags
 from libcst_bmx.libcst.metadata.wrapper import MetadataWrapper
 
-target_filename = sys.argv[1]
+# target_filename = sys.argv[1]
 
 class BmxTransformer(CSTTransformer):
     def leave_BmxSelfClosing(self, original_node: BmxSelfClosing, updated_node: CSTNode) -> Call:
@@ -20,17 +20,17 @@ class BmxTransformer(CSTTransformer):
         attribute_elements = [DictElement(attr.key, attr.value or Name('None')) for attr in original_node.attributes]
         attributes = Dict(attribute_elements)
 
-        element = Call(func=SimpleString('BmxElement'), args=[Arg(value=ref), Arg(value=attributes, star='**')])
+        element = Call(func=Name('BmxElement'), args=[Arg(value=ref), Arg(value=attributes, star='**')])
 
         return element
 
-transformer = BmxTransformer()
-with open(target_filename) as f:
-    original_tree = parse_module(f.read())
-    print(original_tree)
-    print()
-    modified_tree = original_tree.visit(transformer)
-    import_visitor = AddImportsVisitor( )
-    print(modified_tree)
-    print()
-    print(modified_tree.code)
+# transformer = BmxTransformer()
+# with open(target_filename) as f:
+#     original_tree = parse_module(f.read())
+#     print(original_tree)
+#     print()
+#     modified_tree = original_tree.visit(transformer)
+#     import_visitor = AddImportsVisitor( )
+#     print(modified_tree)
+#     print()
+#     print(modified_tree.code)

@@ -11,7 +11,16 @@ class BmxElement:
         self.attributes = attributes
 
     def __str__(self):
-        ...
+        return ''.join((
+            '<',
+            str(self.ref),
+            *(k + '=' + str(v) + ' ' for k, v in self.attributes.items()),
+            '>',
+            str(self.contents),
+            '</',
+            str(self.ref),
+            '>'
+        ))
 
     def render(self) -> R | str | tuple[object, ...]:
         if self.ref is None:
