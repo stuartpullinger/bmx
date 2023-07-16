@@ -1,3 +1,4 @@
+"""Loader for .bmx.py files. Based on https://stackoverflow.com/a/43573798"""
 import sys
 import os.path
 import os
