@@ -8,6 +8,7 @@
 from abc import ABC, abstractmethod
 from collections.abc import Iterable, Sequence
 from enum import Enum
+from inspect import signature
 from reprlib import recursive_repr
 from typing import Any, Callable, List, Optional, Union
 
@@ -64,7 +65,7 @@ class AbstractTag(ABC):
 
 
 class Tag(AbstractTag):
-    def __init__(self: "Tag", _name: str, **_kwargs: Any) -> None:
+    def __init__(self: "Tag", _name: Union[str, Callable], **_kwargs: Any) -> None:
         self.name = _name
         if _kwargs is not None:
             self.attributes = {
@@ -103,7 +104,7 @@ class Tag(AbstractTag):
             new_attributes.setdefault("class_", [])
             if isinstance(class_item, str):
                 # convert "class1 class2" into ['class1', 'class2']
-                new_attributes["class_"].extend(class_item.split(" "))
+                new_attributes["class_"].extend(class_item.split())
             else:
                 new_attributes["class_"].append(class_item)
 
@@ -161,7 +162,7 @@ class Tag(AbstractTag):
         return "".join(
             (
                 "<Tag:",
-                self.name,
+                repr(self.name),
                 "|",
                 hex(id(self)),
                 " ",
@@ -179,23 +180,20 @@ class Tag(AbstractTag):
 class StartTag(Tag):
     def __init__(
         self: "StartTag",
-        _name: str,
+        _name: Union[str, Callable],
         **_kwargs: Any,
     ) -> None:
         self.name = _name
         self.attributes = _kwargs if _kwargs else {}
 
-    def render(self: "StartTag", *_contents: Any, **_attributes: Any) -> "Element":
-        return Element(self.name, *_contents, **_attributes)
-
     def __pos__(self: "StartTag") -> "StartTag":
         raise BMXSyntaxError(
-            f"Cannot ' + ' {self.name} Tag as the TagType is already set at {self!r}"
+            f"Cannot ' + ' {self.name!r} Tag as the TagType is already set at {self!r}"
         )
 
     def __neg__(self: "StartTag") -> "EndTag":
         raise BMXSyntaxError(
-            f"Cannot ' - ' {self.name} Tag as the TagType is already set at {self!r}"
+            f"Cannot ' - ' {self.name!r} Tag as the TagType is already set at {self!r}"
         )
 
     def __add__(self: "StartTag", other: Any) -> "Fragment":
@@ -219,7 +217,7 @@ class StartTag(Tag):
 
     def __rsub__(self: "StartTag", other: Any) -> "Fragment":
         raise BMXSyntaxError(
-            f"Cannot 'subtract' {self!r} tag from {other!r} as {self.name} is already an StartTag"
+            f"Cannot 'subtract' {self!r} tag from {other!r} as {self.name!r} is already an StartTag"
         )
 
     def __repr__(self: "StartTag") -> str:
@@ -227,7 +225,7 @@ class StartTag(Tag):
         return "".join(
             (
                 "<StartTag:",
-                self.name,
+                repr(self.name),
                 "|",
                 hex(id(self)),
                 " ",
@@ -239,6 +237,8 @@ class StartTag(Tag):
     def __str__(self: "StartTag") -> str:
         begin = "<"
         end = ">"
+
+        tag_name = self.name if isinstance(self.name, str) else self.name.__name__
 
         if self.attributes:
             attributes: List[str] = []
@@ -257,21 +257,21 @@ class StartTag(Tag):
         else:
             attributes = []
 
-        return "".join((begin, self.name, *attributes, end))
+        return "".join((begin, tag_name, *attributes, end))
 
 
 class EndTag(Tag):
-    def __init__(self: "EndTag", _name: str) -> None:
+    def __init__(self: "EndTag", _name: Union[str, Callable]) -> None:
         self.name = _name
 
     def __pos__(self: "EndTag") -> "StartTag":
         raise BMXSyntaxError(
-            f"Cannot ' + ' {self.name} Tag as the TagType is already set at {self!r}"
+            f"Cannot ' + ' {self.name!r} Tag as the TagType is already set at {self!r}"
         )
 
     def __neg__(self: "EndTag") -> "EndTag":
         raise BMXSyntaxError(
-            f"Cannot ' - ' {self.name} Tag as the TagType is already set at {self!r}"
+            f"Cannot ' - ' {self.name!r} Tag as the TagType is already set at {self!r}"
         )
 
     def __add__(self: "EndTag", other: "Tag") -> "Fragment":
@@ -295,14 +295,14 @@ class EndTag(Tag):
 
     def __rsub__(self: "EndTag", other: Any) -> "Fragment":
         raise BMXSyntaxError(
-            f"Cannot 'subtract' {self!r} tag from {other!r} as {self.name} is already an EndTag"
+            f"Cannot 'subtract' {self!r} tag from {other!r} as {self.name!r} is already an EndTag"
         )
 
     def __repr__(self: "EndTag") -> str:
         return "".join(
             (
                 "<EndTag:",
-                self.name,
+                repr(self.name),
                 "|",
                 hex(id(self)),
                 ">",
@@ -313,13 +313,15 @@ class EndTag(Tag):
         begin = "</"
         end = ">"
 
-        return "".join((begin, self.name, end))
+        tag_name = self.name if isinstance(self.name, str) else self.name.__name__
+
+        return "".join((begin, tag_name, end))
 
 
 class SelfClosingTag(Tag):
     def __init__(
         self: "SelfClosingTag",
-        _name: str,
+        _name: Union[str, Callable],
         _self_closing_tag_style: SelfClosingTagStyle = SelfClosingTagStyle.XML,
         **_kwargs: Any,
     ) -> None:
@@ -330,17 +332,19 @@ class SelfClosingTag(Tag):
     # TODO: is *_contents needed here?
     def render(
         self: "SelfClosingTag", *_contents: Any, **_attributes: Any
-    ) -> "Element":
-        return Element(self.name, **_attributes)
+    ) -> "SelfClosingTag":
+        return self
+        # return Element(self.name, **_attributes)
 
     def __pos__(self: "SelfClosingTag") -> "StartTag":
+        # return Fragment(self)
         raise BMXSyntaxError(
-            f"Cannot ' + ' {self.name} Tag as the Tag type is already set at {self!r}"
+            f"Cannot ' + ' {self.name!r} Tag as the Tag type is already set at {self!r}"
         )
 
     def __neg__(self: "SelfClosingTag") -> "EndTag":
         raise BMXSyntaxError(
-            f"Cannot ' - ' {self.name} Tag as the Tag type is already set at {self!r}"
+            f"Cannot ' - ' {self.name!r} Tag as the Tag type is already set at {self!r}"
         )
 
     def __add__(self: "SelfClosingTag", other: Any) -> "Fragment":
@@ -364,7 +368,7 @@ class SelfClosingTag(Tag):
 
     def __rsub__(self: "SelfClosingTag", other: "Tag") -> "Fragment":
         raise BMXSyntaxError(
-            f"Cannot 'subtract' {self!r} tag from {other!r} as {self.name} is already an StartTag"
+            f"Cannot 'subtract' {self!r} tag from {other!r} as {self.name!r} is already an StartTag"
         )
 
     def __repr__(self: "SelfClosingTag") -> str:
@@ -372,7 +376,7 @@ class SelfClosingTag(Tag):
         return "".join(
             (
                 "<SelfClosingTag:",
-                self.name,
+                repr(self.name),
                 "|",
                 hex(id(self)),
                 " ",
@@ -384,6 +388,8 @@ class SelfClosingTag(Tag):
     def __str__(self: "SelfClosingTag") -> str:
         begin = "<"
         end = str(self._self_closing_tag_style)
+
+        tag_name = self.name if isinstance(self.name, str) else self.name.__name__
 
         if self.attributes:
             attributes: List[str] = []
@@ -402,40 +408,22 @@ class SelfClosingTag(Tag):
         else:
             attributes = []
 
-        return "".join((begin, self.name, *attributes, end))
+        return "".join((begin, tag_name, *attributes, end))
 
 
 def Component(func: Callable) -> Tag:
-    class RenderMixin(ABC):
-        def render(self: "RenderMixin", *args: Any, **kwargs: Any) -> Any:
-            return func(*args, **kwargs)
+    sig = signature(func)
+    for _, param in sig.parameters.items():
+        if (
+            param.kind == param.POSITIONAL_ONLY
+            or param.kind == param.POSITIONAL_OR_KEYWORD
+            or param.kind == param.VAR_POSITIONAL
+        ):
+            new_tag = Tag(func)
+            break
+    else:
+        new_tag = SelfClosingTag(func)
 
-    class StartComponentTag(RenderMixin, StartTag):
-        def __init__(
-            self: "StartComponentTag",
-            _name: str,
-            #            render: Callable,
-            **_attributes: Any,
-        ) -> None:
-            super().__init__(_name, **_attributes)
-            # setattr(self, "render", render)
-            # self.render = render
-
-    class ComponentTag(Tag):
-        def __init__(
-            self: "ComponentTag",
-            _name: str,
-            #            render: Callable,
-            **_attributes: Any,
-        ) -> None:
-            super().__init__(_name, **_attributes)
-            # setattr(self, "render", render)
-            # self.render = render
-
-        def create_start_tag(self: "ComponentTag") -> StartComponentTag:
-            return StartComponentTag(self.name, **self.attributes)
-
-    new_tag = ComponentTag(func.__name__.replace("_", "-"))
     return new_tag
 
 
@@ -445,7 +433,10 @@ class BMXSyntaxError(SyntaxError):
 
 class Element:
     def __init__(
-        self: "Element", _name: str, *_contents: Any, **_attributes: Any
+        self: "Element",
+        _name: Union[str, Callable],
+        *_contents: Any,
+        **_attributes: Any,
     ) -> None:
         self.name = _name
         self.contents = list(_contents)
@@ -477,7 +468,7 @@ class Element:
         return "".join(
             (
                 "<Element:",
-                self.name,
+                repr(self.name),
                 "|",
                 hex(id(self)),
                 " ",
@@ -488,27 +479,32 @@ class Element:
         )
 
     def __str__(self: "Element") -> str:
-        if self.attributes:
-            attributes: List[str] = []
-            for key, value in self.attributes.items():
-                if str(key).endswith("_"):  # ie. for_, id_, class_
-                    key = key[:-1]
-                if value is True:
-                    attributes.extend(" " + key)
-                    continue
-                elif value is False:
-                    continue
-                elif isinstance(value, list):
-                    value = " ".join(value)
+        if callable(self.name):
+            return str(self.name(*self.contents, **self.attributes))
+        elif hasattr(self.name, "__str__"):
+            if self.attributes:
+                attributes: List[str] = []
+                for key, value in self.attributes.items():
+                    if str(key).endswith("_"):  # ie. for_, id_, class_
+                        key = key[:-1]
+                    if value is True:
+                        attributes.extend(" " + key)
+                        continue
+                    elif value is False:
+                        continue
+                    elif isinstance(value, list):
+                        value = " ".join(value)
 
-                attributes.extend(" " + str(key) + '="' + str(value) + '"')
+                    attributes.extend(" " + str(key) + '="' + str(value) + '"')
+            else:
+                attributes = []
+
+            begin = ("<", self.name, *attributes, ">")
+            end = ("</", self.name, ">")
+
+            return "".join((*begin, *map(str, self.contents), *end))
         else:
-            attributes = []
-
-        begin = ("<", self.name, *attributes, ">")
-        end = ("</", self.name, ">")
-
-        return "".join((*begin, *map(str, self.contents), *end))
+            raise BMXSyntaxError(f"Don't know how to render {self.name!r} to a string")
 
 
 class Fragment(Sequence):
@@ -552,8 +548,10 @@ class Fragment(Sequence):
         for idx, item in enumerate(reversed(self._contents)):
             if isinstance(item, StartTag):
                 if item.name == other.name:
-                    new_element = item.render(
-                        *self._contents[len(self._contents) - idx :], **item.attributes
+                    new_element = Element(
+                        item.name,
+                        *self._contents[len(self._contents) - idx :],
+                        **item.attributes,
                     )
                     return Fragment(
                         *self._contents[: len(self._contents) - idx - 1], new_element
@@ -596,8 +594,10 @@ class Fragment(Sequence):
         for idx, item in enumerate(reversed(self._contents)):
             if isinstance(item, StartTag):
                 if item.name == other.name:
-                    new_element = item.render(
-                        *self._contents[len(self._contents) - idx :], **item.attributes
+                    new_element = Element(
+                        item.name,
+                        *self._contents[len(self._contents) - idx :],
+                        **item.attributes,
                     )
                     return Fragment(
                         *self._contents[: len(self._contents) - idx - 1], new_element

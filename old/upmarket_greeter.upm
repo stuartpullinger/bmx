@@ -1,0 +1,14 @@
+---
+---
+
+<upm-define upm:name="greeter_component" name:str="">
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>Flask Greeter</title>
+    </head>
+    <body>
+      <p>Hello {name}</p>
+    </body>
+  </html>
+</upm-define>
