@@ -2,8 +2,8 @@ import sys
 
 from libcst_bmx.libcst import CSTTransformer, parse_module
 from libcst_bmx.libcst._nodes.base import CSTNode
-from libcst_bmx.libcst._nodes.expression import Arg, Call, DictElement, Dict, Name, SimpleString
-from libcst_bmx.libcst._parser.conversions.bmx import BmxSelfClosing
+from libcst_bmx.libcst._nodes.expression import Arg, Call, DictElement, Dict, Element, List, Name, SimpleString
+from libcst_bmx.libcst._parser.conversions.bmx import BmxOpenClose, BmxSelfClosing
 from libcst_bmx.libcst.codemod.visitors import AddImportsVisitor
 from bmx.htmltags import html5tags
 from libcst_bmx.libcst.metadata.wrapper import MetadataWrapper
@@ -24,6 +24,21 @@ class BmxTransformer(CSTTransformer):
 
         return element
 
+    def leave_BmxOpenClose(self, original_node: BmxOpenClose, updated_node: CSTNode) -> Call:
+        ref = original_node.ref
+        # Special-case html tags eg. h1
+        if isinstance(ref, Name) and ref.value in dir(html5tags):
+            ref = SimpleString(ref.value)
+
+        attribute_elements = [DictElement(attr.key, attr.value or Name('None')) for attr in original_node.attributes]
+        attributes = Dict(attribute_elements)
+
+        #content_elements = [Element(attr) for attr in original_node.contents]
+        contents = List(original_node.contents)
+
+        element = Call(func=Name('BmxElement'), args=[Arg(value=ref), Arg(value=contents, star='*') , Arg(value=attributes, star='**')])
+
+        return element
 # transformer = BmxTransformer()
 # with open(target_filename) as f:
 #     original_tree = parse_module(f.read())

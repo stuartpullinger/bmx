@@ -1,7 +1,7 @@
 from bmx_element import BmxElement
 
-def span(width: int = 42):
-    return 'span' * width
+def shout(phrase: str):
+    return phrase.upper()
 
-
-myvar = <span width="100"/>
+loud_phrase = <shout phrase="hello" />
+print(loud_phrase)
