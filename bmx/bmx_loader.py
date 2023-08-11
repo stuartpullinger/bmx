@@ -5,9 +5,9 @@ import os
 
 from importlib.abc import Loader, MetaPathFinder
 from importlib.util import spec_from_file_location
-from libcst_bmx.libcst import parse_module
+from libcst import parse_module
 
-from transform import BmxTransformer
+from .transform import BmxTransformer
 
 class MyMetaFinder(MetaPathFinder):
     def find_spec(self, fullname, path, target=None):
